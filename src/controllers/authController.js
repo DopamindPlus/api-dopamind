@@ -110,11 +110,11 @@ const loginUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { userId } = req.user;
-    const { name, email, password } = req.body;
+    const { name, email, password, username, phone } = req.body;
 
     const { error } = validateRegister(req.body);
     if (error) {
-      const errorMessage = `Validation failed: ${error}`;
+      const errorMessage = `${error}`;
       return res.status(400).json({ statusCode: 400, error: errorMessage });
     }
 
@@ -134,6 +134,8 @@ const updateUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      username,
+      phone,
     });
 
     if (!updatedUser) {
