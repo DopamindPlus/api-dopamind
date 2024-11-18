@@ -13,18 +13,17 @@ const withoutPasswordHandler = (user) => {
   return userWithoutPassword;
 };
 
-const generateToken = (user) => {
-  const payload = {
-    userId: user.user_id,
-    email: user.email,
-  };
-
-  const options = {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  };
-
-  return jwt.sign(payload, process.env.JWT_SECRET, options);
-};
+const generateToken = (payload) =>
+  jwt.sign(
+    {
+      userId: payload.user_id,
+      email: payload.email,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    }
+  );
 
 const registerUser = async (req, res) => {
   try {

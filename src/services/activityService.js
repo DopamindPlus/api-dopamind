@@ -18,42 +18,42 @@ const disconnectPrisma = async () => {
   await prisma.$disconnect();
 };
 
-const createUser = async (data) => {
+const getAllActivityById = async (userId) => {
   try {
-    const result = await prisma.user.create({
+    const result = await prisma.activity.findMany({
+      where: {
+        user_id: userId,
+      },
+    });
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const getDetailActivityById = async (activityId, userId) => {
+  try {
+    const result = await prisma.activity.findUnique({
+      where: {
+        activity_id: activityId,
+        user_id: userId,
+      },
+    });
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const createActivityById = async (userId, data) => {
+  try {
+    const result = await prisma.activity.create({
       data: {
-        user_id: data.user_id,
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        username: data.username,
-        phone: data.phone,
-      },
-    });
-    return result;
-  } catch (error) {
-    return handlePrismaError(error);
-  }
-};
-
-const getUserByEmail = async (email) => {
-  try {
-    const result = await prisma.user.findUnique({
-      where: {
-        email: email,
-      },
-    });
-    return result;
-  } catch (error) {
-    return handlePrismaError(error);
-  }
-};
-
-const getUserById = async (userId) => {
-  try {
-    const result = await prisma.user.findUnique({
-      where: {
         user_id: userId,
+        title: data.title,
+        location: data.location,
+        start_time: new Date(data.start_time),
+        end_time: new Date(data.end_time),
       },
     });
     return result;
@@ -62,11 +62,11 @@ const getUserById = async (userId) => {
   }
 };
 
-const deleteUser = async (userId) => {
+const deleteActivityById = async (activityId) => {
   try {
-    const result = await prisma.user.delete({
+    const result = await prisma.activity.delete({
       where: {
-        user_id: userId,
+        id: activityId,
       },
     });
     return result;
@@ -75,19 +75,17 @@ const deleteUser = async (userId) => {
   }
 };
 
-const updateUser = async (userId, { data }) => {
+const updateActivityById = async (activityId, data) => {
   try {
-    const result = await prisma.user.update({
+    const result = await prisma.activity.update({
       where: {
-        user_id: userId,
+        activity_id: activityId,
       },
       data: {
-        user_id: data.user_id,
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        username: data.username,
-        phone: data.phone,
+        title: data.title,
+        location: data.location,
+        start_time: new Date(data.start_time),
+        end_time: new Date(data.end_time),
       },
     });
     return result;
@@ -99,9 +97,9 @@ const updateUser = async (userId, { data }) => {
 module.exports = {
   handlePrismaError,
   disconnectPrisma,
-  createUser,
-  getUserByEmail,
-  getUserById,
-  deleteUser,
-  updateUser,
+  getAllActivityById,
+  createActivityById,
+  updateActivityById,
+  deleteActivityById,
+  getDetailActivityById,
 };
