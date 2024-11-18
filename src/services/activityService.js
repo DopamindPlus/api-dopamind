@@ -35,7 +35,7 @@ const getDetailActivityById = async (activityId, userId) => {
   try {
     const result = await prisma.activity.findUnique({
       where: {
-        id: activityId,
+        activity_id: activityId,
         user_id: userId,
       },
     });
@@ -79,7 +79,7 @@ const updateActivityById = async (activityId, data) => {
   try {
     const result = await prisma.activity.update({
       where: {
-        id: activityId,
+        activity_id: activityId,
       },
       data: {
         title: data.title,

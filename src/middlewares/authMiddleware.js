@@ -25,8 +25,6 @@ const authMiddleware = (req, res, next) => {
 
     req.user = decodedToken;
 
-    console.log(decodedToken);
-
     return next();
   } catch (error) {
     return res.status(401).json({

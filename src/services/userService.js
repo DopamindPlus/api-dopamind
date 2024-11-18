@@ -22,7 +22,7 @@ const createUser = async (data) => {
   try {
     const result = await prisma.user.create({
       data: {
-        id: data.id,
+        user_id: data.user_id,
         name: data.name,
         email: data.email,
         password: data.password,
@@ -49,11 +49,11 @@ const getUserByEmail = async (email) => {
   }
 };
 
-const getUserById = async (id) => {
+const getUserById = async (userId) => {
   try {
     const result = await prisma.user.findUnique({
       where: {
-        id: id,
+        user_id: userId,
       },
     });
     return result;
@@ -62,11 +62,11 @@ const getUserById = async (id) => {
   }
 };
 
-const deleteUser = async (id) => {
+const deleteUser = async (userId) => {
   try {
     const result = await prisma.user.delete({
       where: {
-        id: id,
+        user_id: userId,
       },
     });
     return result;
@@ -75,14 +75,14 @@ const deleteUser = async (id) => {
   }
 };
 
-const updateUser = async (id, { data }) => {
+const updateUser = async (userId, { data }) => {
   try {
     const result = await prisma.user.update({
       where: {
-        id: id,
+        user_id: userId,
       },
       data: {
-        id: data.id,
+        user_id: data.user_id,
         name: data.name,
         email: data.email,
         password: data.password,
