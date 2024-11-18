@@ -4,23 +4,37 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const authMiddleware = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const token = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res
-      .status(401)
-      .json({ statusCode: 401, error: { message: "Unauthorized" } });
+  if (!token || !token.startsWith("Bearer ")) {
+    return res.status(401).json({
+      error: { message: "Unauthorized: Missing or invalid token format" },
+    });
   }
 
-  const token = authHeader.split(" ")[1];
+  const tokenWithoutBearer = token.split("Bearer ")[1];
 
-  try {
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decodedToken;
-  } catch (error) {
+  if (!tokenWithoutBearer) {
     return res
       .status(401)
-      .json({ statusCode: 401, error: { message: "Unauthorized" } });
+      .json({ error: { message: "Unauthorized: Missing token value" } });
+  }
+
+  try {
+    const decodedToken = jwt.verify(tokenWithoutBearer, process.env.JWT_SECRET);
+
+    req.user = decodedToken;
+
+    console.log(decodedToken);
+
+    return next();
+  } catch (error) {
+    return res.status(401).json({
+      error: {
+        message: "Unauthorized: Token verification failed",
+        details: error.message,
+      },
+    });
   }
 };
 

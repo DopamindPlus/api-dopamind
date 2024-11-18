@@ -15,7 +15,7 @@ const withoutPasswordHandler = (user) => {
 
 const generateToken = (user) => {
   const payload = {
-    userId: user.user_id,
+    userId: user.id,
     email: user.email,
   };
 
