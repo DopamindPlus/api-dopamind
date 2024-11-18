@@ -66,7 +66,7 @@ const deleteActivityById = async (activityId) => {
   try {
     const result = await prisma.activity.delete({
       where: {
-        id: activityId,
+        activity_id: activityId,
       },
     });
     return result;
