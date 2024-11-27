@@ -1,6 +1,6 @@
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "mysql"  // Menggunakan MySQL sebagai provider
+  url      = env("DATABASE_URL")  // URL koneksi diambil dari variabel lingkungan DATABASE_URL
 }
 
 generator client {
@@ -8,16 +8,19 @@ generator client {
 }
 
 model TypeDoctor {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  description String   @db.Text
-  doctors     Doctor[] @relation("TypeDoctorDoctors")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String
+  doctors     Doctor[]  @relation("DoctorType")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Doctor {
-  id          Int        @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   name        String
-  typeDoctors TypeDoctor[] @relation("TypeDoctorDoctors")
+  typeDoctors TypeDoctor[] @relation("DoctorType")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
+

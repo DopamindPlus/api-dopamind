@@ -36,6 +36,25 @@ export const typeDoctorController = {
     }
   },
 
+  async createDoctor(req, res, next) {
+    try {
+      const { name } = req.body; 
+      const newDoctor = await TypeDoctorService.createDoctor({ name });
+      res.status(201).json(newDoctor); 
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getAllDoctors(req, res, next) {
+    try {
+      const doctors = await TypeDoctorService.getAllDoctors();
+      res.status(200).json(doctors);
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async addDoctor(req, res, next) {
     try {
       const { typeId, doctorId } = req.params;

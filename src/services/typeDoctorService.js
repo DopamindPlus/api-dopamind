@@ -7,10 +7,11 @@ const DOCTORS_API_URL = process.env.DOCTORS_API_URL;
 
 export class TypeDoctorService {
   static async getAllTypeDoctors() {
-    const types = await prisma.typeDoctor.findMany({
-      include: { doctors: true }
+    return prisma.typeDoctor.findMany({
+      include: { 
+        doctors: true 
+      }
     });
-    return types;
   }
 
   static async getTypeDoctorById(id) {
@@ -41,17 +42,16 @@ export class TypeDoctorService {
   }
 
   static async addDoctorToType(typeId, doctorId) {
-    const type = await prisma.typeDoctor.findUnique({
-      where: { id: parseInt(typeId, 10) }
-    });
+    const [type, doctor] = await Promise.all([
+      prisma.typeDoctor.findUnique({ where: { id: parseInt(typeId, 10) } }),
+      prisma.doctor.findUnique({ where: { id: parseInt(doctorId, 10) } })
+    ]);
 
     if (!type) {
       throw new NotFoundError('Type Doctor not found');
     }
 
-    try {
-      await axios.get(`${DOCTORS_API_URL}/doctors/${doctorId}`);
-    } catch (error) {
+    if (!doctor) {
       throw new NotFoundError('Doctor not found');
     }
 
@@ -61,6 +61,22 @@ export class TypeDoctorService {
         doctors: {
           connect: { id: parseInt(doctorId, 10) }
         }
+      },
+      include: { doctors: true }
+    });
+  }
+
+  static async createDoctor(data) {
+    return prisma.doctor.create({
+      data: {
+        name: data.name
+      }
+    });
+  }
+  static async getAllDoctors() {
+    return prisma.doctor.findMany({
+      include: { 
+        typeDoctors: true 
       }
     });
   }
