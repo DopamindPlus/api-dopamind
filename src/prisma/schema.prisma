@@ -38,7 +38,28 @@ model Activity{
   user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
 }
 
-// To Do Create Relation Between Booking and Doctor
+model TypeDoctor{
+  type_id Int @id @default(autoincrement())
+  name String
+  description String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  doctor Doctor[]
+}
+
+model Doctor{
+  doctor_id Int @id @default(autoincrement())
+  type_id Int
+  image String
+  name String
+  price String
+  experience String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  type TypeDoctor @relation(fields: [type_id], references: [type_id], onDelete: Cascade, onUpdate: Cascade)
+  booking Booking[]
+}
+
 model Booking{
   booking_id Int @id @default(autoincrement())
   doctor_id Int
@@ -48,4 +69,5 @@ model Booking{
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
+  doctor Doctor @relation(fields: [doctor_id], references: [doctor_id], onDelete: Cascade, onUpdate: Cascade)
 }
