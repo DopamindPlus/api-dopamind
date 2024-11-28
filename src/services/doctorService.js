@@ -1,5 +1,6 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
+const uploadImageToCloudStorage = require("../services/uploadCloudStorageService");
 
 const handlePrismaError = (error) => {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -53,17 +54,29 @@ const deleteDoctorById = async (doctorId) => {
   }
 };
 
-const createDoctorById = async (data) => {
+const createDoctorById = async (data, file) => {
   try {
+    if (!file) {
+      throw new Error("Image file is required");
+    }
+
+    const imageBuffer = file.buffer;
+
+    const imageUrl = await uploadImageToCloudStorage(
+      imageBuffer,
+      `doctors/${Date.now()}-${data.name}.jpg`
+    );
+
     const result = await prisma.doctor.create({
       data: {
         type_id: data.type_id,
         name: data.name,
         experience: data.experience,
-        image: data.image,
+        image: imageUrl,
         price: data.price,
       },
     });
+
     return result;
   } catch (error) {
     return handlePrismaError(error);
