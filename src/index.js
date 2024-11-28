@@ -5,6 +5,7 @@ const authRoutes = require("./routes/authRoutes");
 const activityRoutes = require("./routes/activityRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const typeDoctorRoutes = require("./routes/typeDoctorRoutes");
+const doctorRoutes = require("./routes/doctorRoutes");
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/activity", activityRoutes);
 app.use("/api/booking", bookingRoutes);
 app.use("/api/type-doctor", typeDoctorRoutes);
+app.use("/api/doctor", doctorRoutes);
 
 app.listen(PORT, () => {
   console.log("Express running in port" + PORT);
