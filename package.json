@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/index.js",
+    "start-dev": "nodemon index.js",
+    "build": "webpack",
+    "prod": "node dist/final.js",
+    "prisma-migrate:deploy": "prisma migrate deploy",
+    "prisma-migrate:dev": "prisma migrate dev"
   },
   "author": "",
   "license": "ISC",
