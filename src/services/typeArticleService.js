@@ -1,5 +1,5 @@
+const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
-const uploadImageToCloudStorage = require("../services/uploadCloudStorageService");
 
 const handlePrismaError = (error) => {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -16,4 +16,79 @@ const handlePrismaError = (error) => {
 // Disconnect Prisma client when done
 const disconnectPrisma = async () => {
   await prisma.$disconnect();
+};
+
+const getAllArticleTypeById = async () => {
+  try {
+    const result = await prisma.typeArticle.findMany();
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const getDetailArticleTypeById = async (articleTypeId) => {
+  try {
+    const result = await prisma.typeArticle.findUnique({
+      where: {
+        type_article_id: articleTypeId,
+      },
+    });
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const deleteArticleTypeById = async (articleTypeId) => {
+  try {
+    const result = await prisma.typeArticle.delete({
+      where: {
+        type_article_id: articleTypeId,
+      },
+    });
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const createArticleTypeById = async (data) => {
+  try {
+    const result = await prisma.typeArticle.create({
+      data: {
+        name: data.name,
+      },
+    });
+
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const updateArticleTypeById = async (articleTypeId, data) => {
+  try {
+    const result = await prisma.typeArticle.update({
+      where: {
+        article_id: articleTypeId,
+      },
+      data: {
+        name: data.name,
+      },
+    });
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+module.exports = {
+  handlePrismaError,
+  disconnectPrisma,
+  createArticleTypeById,
+  getAllArticleTypeById,
+  getDetailArticleTypeById,
+  updateArticleTypeById,
+  deleteArticleTypeById,
 };
