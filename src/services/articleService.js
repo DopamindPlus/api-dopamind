@@ -64,16 +64,15 @@ const createArticleById = async (data, file) => {
 
     const imageUrl = await uploadImageToCloudStorage(
       imageBuffer,
-      `articles/${Date.now()}-${data.name}.jpg`
+      `articles/${Date.now()}-${data.title}.jpg`
     );
 
     const result = await prisma.article.create({
       data: {
-        type_id: data.type_id,
-        name: data.name,
-        experience: data.experience,
+        type_article_id: data.type_article_id,
+        title: data.title,
         image: imageUrl,
-        price: data.price,
+        content: data.content,
       },
     });
 
@@ -90,11 +89,10 @@ const updateArticleById = async (articleId, data) => {
         article_id: articleId,
       },
       data: {
-        type_id: data.type_id,
-        name: data.name,
-        experience: data.experience,
-        image: data.image,
-        price: data.price,
+        type_article_id: data.type_article_id,
+        title: data.title,
+        image: imageUrl,
+        content: data.conte,
       },
     });
     return result;
@@ -103,4 +101,12 @@ const updateArticleById = async (articleId, data) => {
   }
 };
 
-module.exports = { handlePrismaError, disconnectPrisma };
+module.exports = {
+  handlePrismaError,
+  disconnectPrisma,
+  getAllArticleById,
+  getDetailArticleById,
+  deleteArticleById,
+  createArticleById,
+  updateArticleById,
+};
