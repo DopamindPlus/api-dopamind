@@ -95,7 +95,7 @@ model Article {
 model Mood {
   mood_id Int @id @default(autoincrement())
   user_id Int
-  label String
+  predictions String
   texts String
   user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
 }
