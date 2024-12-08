@@ -48,6 +48,27 @@ const getDetailMoodById = async (req, res) => {
   }
 };
 
+const createMoodById = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const moodData = req.body;
+
+    const newMood = await moodService.createMoodById(userId, moodData);
+
+    return res.status(201).json({
+      statusCode: 201,
+      message: "Mood created successfully",
+      data: newMood,
+    });
+  } catch (error) {
+    console.error("Error creating mood:", error.message);
+    return res.status(500).json({
+      statusCode: 500,
+      message: "Internal server error",
+    });
+  }
+};
+
 const deleteMoodById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -78,4 +99,5 @@ module.exports = {
   getAllMoodById,
   getDetailMoodById,
   deleteMoodById,
+  createMoodById,
 };

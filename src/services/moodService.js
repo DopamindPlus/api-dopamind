@@ -45,6 +45,21 @@ const getDetailMoodById = async (moodId, userId) => {
   }
 };
 
+const createMoodById = async (userId, data) => {
+  try {
+    const result = await prisma.mood.create({
+      data: {
+        user_id: userId,
+        predictions: data.predictions,
+        texts: data.texts,
+      },
+    });
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
 const deleteMoodById = async (moodId) => {
   try {
     const result = await prisma.mood.delete({
@@ -62,5 +77,6 @@ module.exports = {
   disconnectPrisma,
   getAllMoodById,
   getDetailMoodById,
+  createMoodById,
   deleteMoodById,
 };

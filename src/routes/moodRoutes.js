@@ -10,6 +10,8 @@ router.get("/", moodController.getAllMoodById);
 
 router.get("/:id", moodController.getDetailMoodById);
 
+router.post("/", moodController.createMoodById);
+
 router.delete("/:id", moodController.deleteMoodById);
 
 module.exports = router;
