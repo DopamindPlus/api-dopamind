@@ -8,6 +8,7 @@ const typeDoctorRoutes = require("./routes/typeDoctorRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
 const articleRoutes = require("./routes/articleRoutes");
 const typeArticleRoutes = require("./routes/typeArticleRoutes");
+const moodRoutes = require("./routes/moodRoutes");
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use("/api/type-doctor", typeDoctorRoutes);
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/article", articleRoutes);
 app.use("/api/type-article", typeArticleRoutes);
+app.use("/api/mood", moodRoutes);
 
 app.listen(PORT, () => {
   console.log("Express running in port" + PORT);

@@ -24,6 +24,7 @@ model User{
   updated_at DateTime @updatedAt
   activity Activity[]
   booking Booking[]
+  mood Mood[]
 }
 
 model Activity{
@@ -89,4 +90,12 @@ model Article {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   type_article TypeArticle @relation(fields: [type_article_id], references: [type_article_id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Mood {
+  mood_id Int @id @default(autoincrement())
+  user_id Int
+  predictions String
+  texts String
+  user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
 }
