@@ -10,6 +10,7 @@ const articleRoutes = require("./routes/articleRoutes");
 const typeArticleRoutes = require("./routes/typeArticleRoutes");
 const moodRoutes = require("./routes/moodRoutes");
 const chatbotRoutes = require("./routes/chatbotRoutes");
+const mapsRoutes = require("./routes/mapsRoutes");
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use("/api/article", articleRoutes);
 app.use("/api/type-article", typeArticleRoutes);
 app.use("/api/mood", moodRoutes);
 app.use("/api/chat", chatbotRoutes);
+app.use("/api/maps", mapsRoutes);
 
 app.listen(PORT, () => {
   console.log("Express running in port" + PORT);
