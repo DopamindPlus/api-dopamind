@@ -61,9 +61,8 @@ const createDoctorById = async (data, file) => {
     }
 
     const typeId = Number(data.type_id);
-    const price = Number(data.price);
 
-    if (isNaN(typeId) || isNaN(price)) {
+    if (isNaN(typeId)) {
       throw new Error("Invalid type_id or price");
     }
 
@@ -80,7 +79,7 @@ const createDoctorById = async (data, file) => {
         name: data.name,
         experience: data.experience,
         image: imageUrl,
-        price: price,
+        price: data.price,
       },
     });
 
