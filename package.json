@@ -18,7 +18,9 @@
   },
   "dependencies": {
     "@google-cloud/storage": "^7.14.0",
+    "@google/generative-ai": "^0.21.0",
     "@prisma/client": "^5.22.0",
+    "axios": "^1.7.9",
     "bcrypt-node": "^0.1.0",
     "bcrypt-nodejs": "^0.0.3",
     "cors": "^2.8.5",
