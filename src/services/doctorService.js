@@ -60,6 +60,13 @@ const createDoctorById = async (data, file) => {
       throw new Error("Image file is required");
     }
 
+    const typeId = Number(data.type_id);
+    const price = Number(data.price);
+
+    if (isNaN(typeId) || isNaN(price)) {
+      throw new Error("Invalid type_id or price");
+    }
+
     const imageBuffer = file.buffer;
 
     const imageUrl = await uploadImageToCloudStorage(
@@ -69,11 +76,11 @@ const createDoctorById = async (data, file) => {
 
     const result = await prisma.doctor.create({
       data: {
-        type_id: data.type_id,
+        type_id: typeId,
         name: data.name,
         experience: data.experience,
         image: imageUrl,
-        price: data.price,
+        price: price,
       },
     });
 
