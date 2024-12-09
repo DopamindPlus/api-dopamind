@@ -4,7 +4,7 @@ const path = require("path");
 const storage = new Storage({
   keyFilename: path.join(__dirname, "../config/keys/service-account-key.json"),
 });
-const bucketName = "dopamind-dev";
+const bucketName = "dopamind";
 
 const uploadImageToCloudStorage = async (imageBuffer, fileName) => {
   try {
