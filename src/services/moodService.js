@@ -18,42 +18,40 @@ const disconnectPrisma = async () => {
   await prisma.$disconnect();
 };
 
-const createUser = async (data) => {
+const getAllMoodById = async (userId) => {
   try {
-    const result = await prisma.user.create({
+    const result = await prisma.mood.findMany({
+      where: {
+        user_id: userId,
+      },
+    });
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const getDetailMoodById = async (moodId, userId) => {
+  try {
+    const result = await prisma.mood.findUnique({
+      where: {
+        mood_id: moodId,
+        user_id: userId,
+      },
+    });
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const createMoodById = async (userId, data) => {
+  try {
+    const result = await prisma.mood.create({
       data: {
-        user_id: data.user_id,
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        username: data.username,
-        phone: data.phone,
-      },
-    });
-    return result;
-  } catch (error) {
-    return handlePrismaError(error);
-  }
-};
-
-const getUserByEmail = async (email) => {
-  try {
-    const result = await prisma.user.findUnique({
-      where: {
-        email: email,
-      },
-    });
-    return result;
-  } catch (error) {
-    return handlePrismaError(error);
-  }
-};
-
-const getUserById = async (userId) => {
-  try {
-    const result = await prisma.user.findUnique({
-      where: {
         user_id: userId,
+        predictions: data.predictions,
+        texts: data.texts,
       },
     });
     return result;
@@ -62,32 +60,11 @@ const getUserById = async (userId) => {
   }
 };
 
-const deleteUser = async (userId) => {
+const deleteMoodById = async (moodId) => {
   try {
-    const result = await prisma.user.delete({
+    const result = await prisma.mood.delete({
       where: {
-        user_id: userId,
-      },
-    });
-    return result;
-  } catch (error) {
-    return handlePrismaError(error);
-  }
-};
-
-const updateUser = async (userId, { data }) => {
-  try {
-    const result = await prisma.user.update({
-      where: {
-        user_id: userId,
-      },
-      data: {
-        user_id: data.user_id,
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        username: data.username,
-        phone: data.phone,
+        mood_id: moodId,
       },
     });
     return result;
@@ -97,11 +74,9 @@ const updateUser = async (userId, { data }) => {
 };
 
 module.exports = {
-  handlePrismaError,
   disconnectPrisma,
-  createUser,
-  getUserByEmail,
-  getUserById,
-  deleteUser,
-  updateUser,
+  getAllMoodById,
+  getDetailMoodById,
+  createMoodById,
+  deleteMoodById,
 };

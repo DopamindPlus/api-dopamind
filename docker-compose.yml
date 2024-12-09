@@ -1,0 +1,21 @@
+services:
+  mysql:
+    image: "mysql/mysql-server:8.0"
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: "dopamind-plus"
+      MYSQL_USER: "admin"
+      MYSQL_PASSWORD: "CHANGETHISPLEASE"
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+  server:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "mysql://root:@mysql:3306/dopamind-plus"
+      JWT_SECRET: "CHANGETHISPLEASE"
+      JWT_EXPIRES_IN: "1h"

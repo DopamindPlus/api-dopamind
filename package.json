@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/index.js",
+    "start-dev": "nodemon index.js",
+    "build": "webpack",
+    "prod": "node dist/final.js",
+    "prisma-migrate:deploy": "prisma migrate deploy",
+    "prisma-migrate:dev": "prisma migrate dev"
   },
   "author": "",
   "license": "ISC",
@@ -12,12 +17,18 @@
     "schema": "src/prisma/schema.prisma"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.14.0",
+    "@google/generative-ai": "^0.21.0",
     "@prisma/client": "^5.22.0",
+    "axios": "^1.7.9",
+    "bcrypt-node": "^0.1.0",
     "bcrypt-nodejs": "^0.0.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
     "prisma": "^5.22.0"
   },
   "devDependencies": {

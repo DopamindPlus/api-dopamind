@@ -18,42 +18,54 @@ const disconnectPrisma = async () => {
   await prisma.$disconnect();
 };
 
-const createUser = async (data) => {
+const getAllBookingById = async (userId) => {
   try {
-    const result = await prisma.user.create({
+    const result = await prisma.booking.findMany({
+      where: {
+        user_id: userId,
+      },
+    });
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const getDetailBookingById = async (bookingId, userId) => {
+  try {
+    const result = await prisma.booking.findUnique({
+      where: {
+        booking_id: bookingId,
+        user_id: userId,
+      },
+    });
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const deleteBookingById = async (bookingId) => {
+  try {
+    const result = await prisma.booking.delete({
+      where: {
+        booking_id: bookingId,
+      },
+    });
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const createBookingById = async (userId, data) => {
+  try {
+    const result = await prisma.booking.create({
       data: {
-        user_id: data.user_id,
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        username: data.username,
-        phone: data.phone,
-      },
-    });
-    return result;
-  } catch (error) {
-    return handlePrismaError(error);
-  }
-};
-
-const getUserByEmail = async (email) => {
-  try {
-    const result = await prisma.user.findUnique({
-      where: {
-        email: email,
-      },
-    });
-    return result;
-  } catch (error) {
-    return handlePrismaError(error);
-  }
-};
-
-const getUserById = async (userId) => {
-  try {
-    const result = await prisma.user.findUnique({
-      where: {
         user_id: userId,
+        doctor_id: data.doctor_id,
+        notes: data.notes,
+        date: new Date(data.date),
       },
     });
     return result;
@@ -62,32 +74,17 @@ const getUserById = async (userId) => {
   }
 };
 
-const deleteUser = async (userId) => {
+const updateBookingById = async (bookingId, data) => {
   try {
-    const result = await prisma.user.delete({
+    const result = await prisma.booking.update({
       where: {
-        user_id: userId,
-      },
-    });
-    return result;
-  } catch (error) {
-    return handlePrismaError(error);
-  }
-};
-
-const updateUser = async (userId, { data }) => {
-  try {
-    const result = await prisma.user.update({
-      where: {
-        user_id: userId,
+        booking_id: bookingId,
       },
       data: {
-        user_id: data.user_id,
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        username: data.username,
-        phone: data.phone,
+        user_id: userId,
+        doctor_id: data.doctor_id,
+        notes: data.notes,
+        date: new Date(data.date),
       },
     });
     return result;
@@ -99,9 +96,9 @@ const updateUser = async (userId, { data }) => {
 module.exports = {
   handlePrismaError,
   disconnectPrisma,
-  createUser,
-  getUserByEmail,
-  getUserById,
-  deleteUser,
-  updateUser,
+  getAllBookingById,
+  getDetailBookingById,
+  deleteBookingById,
+  createBookingById,
+  updateBookingById,
 };

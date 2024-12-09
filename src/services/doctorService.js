@@ -1,5 +1,6 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
+const uploadImageToCloudStorage = require("../services/uploadCloudStorageService");
 
 const handlePrismaError = (error) => {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -18,76 +19,82 @@ const disconnectPrisma = async () => {
   await prisma.$disconnect();
 };
 
-const createUser = async (data) => {
+const getAllDoctorById = async () => {
   try {
-    const result = await prisma.user.create({
+    const result = await prisma.doctor.findMany();
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const getDetailDoctorById = async (doctorId) => {
+  try {
+    const result = await prisma.doctor.findUnique({
+      where: {
+        doctor_id: doctorId,
+      },
+    });
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const deleteDoctorById = async (doctorId) => {
+  try {
+    const result = await prisma.doctor.delete({
+      where: {
+        doctor_id: doctorId,
+      },
+    });
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const createDoctorById = async (data, file) => {
+  try {
+    if (!file) {
+      throw new Error("Image file is required");
+    }
+
+    const imageBuffer = file.buffer;
+
+    const imageUrl = await uploadImageToCloudStorage(
+      imageBuffer,
+      `doctors/${Date.now()}-${data.name}.jpg`
+    );
+
+    const result = await prisma.doctor.create({
       data: {
-        user_id: data.user_id,
+        type_id: data.type_id,
         name: data.name,
-        email: data.email,
-        password: data.password,
-        username: data.username,
-        phone: data.phone,
+        experience: data.experience,
+        image: imageUrl,
+        price: data.price,
       },
     });
+
     return result;
   } catch (error) {
     return handlePrismaError(error);
   }
 };
 
-const getUserByEmail = async (email) => {
+const updateDoctorById = async (doctorId, data) => {
   try {
-    const result = await prisma.user.findUnique({
+    const result = await prisma.doctor.update({
       where: {
-        email: email,
-      },
-    });
-    return result;
-  } catch (error) {
-    return handlePrismaError(error);
-  }
-};
-
-const getUserById = async (userId) => {
-  try {
-    const result = await prisma.user.findUnique({
-      where: {
-        user_id: userId,
-      },
-    });
-    return result;
-  } catch (error) {
-    return handlePrismaError(error);
-  }
-};
-
-const deleteUser = async (userId) => {
-  try {
-    const result = await prisma.user.delete({
-      where: {
-        user_id: userId,
-      },
-    });
-    return result;
-  } catch (error) {
-    return handlePrismaError(error);
-  }
-};
-
-const updateUser = async (userId, { data }) => {
-  try {
-    const result = await prisma.user.update({
-      where: {
-        user_id: userId,
+        doctor_id: doctorId,
       },
       data: {
-        user_id: data.user_id,
+        type_id: data.type_id,
         name: data.name,
-        email: data.email,
-        password: data.password,
-        username: data.username,
-        phone: data.phone,
+        experience: data.experience,
+        image: data.image,
+        price: data.price,
       },
     });
     return result;
@@ -99,9 +106,9 @@ const updateUser = async (userId, { data }) => {
 module.exports = {
   handlePrismaError,
   disconnectPrisma,
-  createUser,
-  getUserByEmail,
-  getUserById,
-  deleteUser,
-  updateUser,
+  getAllDoctorById,
+  getDetailDoctorById,
+  createDoctorById,
+  deleteDoctorById,
+  updateDoctorById,
 };
