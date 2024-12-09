@@ -60,6 +60,12 @@ const createArticleById = async (data, file) => {
       throw new Error("Image file is required");
     }
 
+    const typeArticleId = Number(data.type_article_id);
+
+    if (isNaN(typeArticleId)) {
+      throw new Error("Invalid type_article_id");
+    }
+
     const imageBuffer = file.buffer;
 
     const imageUrl = await uploadImageToCloudStorage(
@@ -69,7 +75,7 @@ const createArticleById = async (data, file) => {
 
     const result = await prisma.article.create({
       data: {
-        type_article_id: data.type_article_id,
+        type_article_id: typeArticleId,
         title: data.title,
         image: imageUrl,
         content: data.content,
