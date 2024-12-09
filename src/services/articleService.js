@@ -1,5 +1,6 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
+const uploadImageToCloudStorage = require("../services/uploadCloudStorageService");
 
 const handlePrismaError = (error) => {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -18,76 +19,80 @@ const disconnectPrisma = async () => {
   await prisma.$disconnect();
 };
 
-const createUser = async (data) => {
+const getAllArticleById = async () => {
   try {
-    const result = await prisma.user.create({
+    const result = await prisma.article.findMany();
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const getDetailArticleById = async (articleId) => {
+  try {
+    const result = await prisma.article.findUnique({
+      where: {
+        article_id: articleId,
+      },
+    });
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const deleteArticleById = async (articleId) => {
+  try {
+    const result = await prisma.article.delete({
+      where: {
+        article_id: articleId,
+      },
+    });
+    return result;
+  } catch (error) {
+    return handlePrismaError(error);
+  }
+};
+
+const createArticleById = async (data, file) => {
+  try {
+    if (!file) {
+      throw new Error("Image file is required");
+    }
+
+    const imageBuffer = file.buffer;
+
+    const imageUrl = await uploadImageToCloudStorage(
+      imageBuffer,
+      `articles/${Date.now()}-${data.title}.jpg`
+    );
+
+    const result = await prisma.article.create({
       data: {
-        user_id: data.user_id,
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        username: data.username,
-        phone: data.phone,
+        type_article_id: data.type_article_id,
+        title: data.title,
+        image: imageUrl,
+        content: data.content,
       },
     });
+
     return result;
   } catch (error) {
     return handlePrismaError(error);
   }
 };
 
-const getUserByEmail = async (email) => {
+const updateArticleById = async (articleId, data) => {
   try {
-    const result = await prisma.user.findUnique({
+    const result = await prisma.article.update({
       where: {
-        email: email,
-      },
-    });
-    return result;
-  } catch (error) {
-    return handlePrismaError(error);
-  }
-};
-
-const getUserById = async (userId) => {
-  try {
-    const result = await prisma.user.findUnique({
-      where: {
-        user_id: userId,
-      },
-    });
-    return result;
-  } catch (error) {
-    return handlePrismaError(error);
-  }
-};
-
-const deleteUser = async (userId) => {
-  try {
-    const result = await prisma.user.delete({
-      where: {
-        user_id: userId,
-      },
-    });
-    return result;
-  } catch (error) {
-    return handlePrismaError(error);
-  }
-};
-
-const updateUser = async (userId, { data }) => {
-  try {
-    const result = await prisma.user.update({
-      where: {
-        user_id: userId,
+        article_id: articleId,
       },
       data: {
-        user_id: data.user_id,
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        username: data.username,
-        phone: data.phone,
+        type_article_id: data.type_article_id,
+        title: data.title,
+        image: imageUrl,
+        content: data.conte,
       },
     });
     return result;
@@ -99,9 +104,9 @@ const updateUser = async (userId, { data }) => {
 module.exports = {
   handlePrismaError,
   disconnectPrisma,
-  createUser,
-  getUserByEmail,
-  getUserById,
-  deleteUser,
-  updateUser,
+  getAllArticleById,
+  getDetailArticleById,
+  deleteArticleById,
+  createArticleById,
+  updateArticleById,
 };

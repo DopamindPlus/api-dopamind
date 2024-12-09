@@ -14,10 +14,90 @@ datasource db {
 }
 
 model User{
-  id String @id @default(cuid())
+  user_id Int @id @default(autoincrement())
   email String @unique
   password String
   username String
   name String
-  phone Int
+  phone String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  activity Activity[]
+  booking Booking[]
+  mood Mood[]
+}
+
+model Activity{
+  activity_id Int @id @default(autoincrement())
+  user_id Int
+  start_time DateTime
+  end_time DateTime
+  title String
+  location String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model TypeDoctor{
+  type_id Int @id @default(autoincrement())
+  name String
+  description String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  doctor Doctor[]
+}
+
+model Doctor{
+  doctor_id Int @id @default(autoincrement())
+  type_id Int
+  image String
+  name String
+  price String
+  experience String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  type TypeDoctor @relation(fields: [type_id], references: [type_id], onDelete: Cascade, onUpdate: Cascade)
+  booking Booking[]
+}
+
+model Booking{
+  booking_id Int @id @default(autoincrement())
+  doctor_id Int
+  user_id Int 
+  notes String
+  date DateTime
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
+  doctor Doctor @relation(fields: [doctor_id], references: [doctor_id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model TypeArticle{
+  type_article_id Int @id @default(autoincrement())
+  name String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  article Article[]
+}
+
+model Article {
+  article_id Int @id @default(autoincrement())
+  type_article_id Int
+  title String
+  image String
+  content String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  type_article TypeArticle @relation(fields: [type_article_id], references: [type_article_id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Mood {
+  mood_id Int @id @default(autoincrement())
+  user_id Int
+  predictions String
+  texts String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
 }
