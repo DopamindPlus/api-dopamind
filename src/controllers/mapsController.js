@@ -20,7 +20,6 @@ const getNearbyHospitals = async (req, res) => {
     const placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location}&radius=${radius}&type=hospital&key=${API_KEY}`;
 
     const placesResponse = await axios.get(placesUrl);
-
     const placesData = placesResponse.data;
 
     if (!placesData.results || placesData.results.length === 0) {
@@ -30,11 +29,25 @@ const getNearbyHospitals = async (req, res) => {
       });
     }
 
-    const hospitals = placesData.results.map((hospital) => ({
-      name: hospital.name,
-      address: hospital.vicinity,
-      location: hospital.geometry.location,
-    }));
+    const hospitals = placesData.results
+      .filter((hospital) => {
+        const keywords = ["hospital", "rumah sakit"];
+        return keywords.some((keyword) =>
+          hospital.name.toLowerCase().includes(keyword)
+        );
+      })
+      .map((hospital) => ({
+        name: hospital.name,
+        address: hospital.vicinity,
+        location: hospital.geometry.location,
+      }));
+
+    if (hospitals.length === 0) {
+      return res.status(404).json({
+        statusCode: 404,
+        message: "No valid hospitals found",
+      });
+    }
 
     return res.status(200).json({
       statusCode: 200,
@@ -51,17 +64,30 @@ const getNearbyHospitals = async (req, res) => {
 };
 
 const getDirections = async (req, res) => {
-  const { origin, destination } = req.body;
+  const { origin, radius = 5000 } = req.body;
 
-  if (!origin || !destination) {
+  if (!origin) {
     return res.status(400).json({
       statusCode: 400,
-      message: "Origin and destination are required",
+      message: "Origin is required",
     });
   }
 
   try {
-    const directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${API_KEY}`;
+    const nearbyUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${origin}&radius=${radius}&type=hospital&key=${API_KEY}`;
+    const nearbyResponse = await axios.get(nearbyUrl);
+    const nearbyData = nearbyResponse.data;
+
+    if (!nearbyData.results || nearbyData.results.length === 0) {
+      return res.status(404).json({
+        statusCode: 404,
+        message: "No nearby hospitals found",
+      });
+    }
+
+    const closestHospital = nearbyData.results[0];
+
+    const directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${closestHospital.geometry.location.lat},${closestHospital.geometry.location.lng}&key=${API_KEY}`;
 
     const directionsResponse = await axios.get(directionsUrl);
     const directionsData = directionsResponse.data;
@@ -76,8 +102,13 @@ const getDirections = async (req, res) => {
     const route = directionsData.routes[0].legs[0];
     return res.status(200).json({
       statusCode: 200,
-      message: "Directions retrieved successfully",
+      message: "Directions to the nearest hospital retrieved successfully",
       data: {
+        hospital: {
+          name: closestHospital.name,
+          address: closestHospital.vicinity,
+          location: closestHospital.geometry.location,
+        },
         distance: route.distance.text,
         duration: route.duration.text,
         steps: route.steps.map((step) => ({
